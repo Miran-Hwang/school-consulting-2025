@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025년 찾아가는 학교 컨설팅 데이터 분석 실무가이드</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .copyright-bar {
+            background-color: #1a252f;
+            color: #ccc;
+            text-align: center;
+            padding: 5px;
+            font-size: 0.75em;
+            width: 100%;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 40px 20px 60px; /* 상단 여백 조정 */
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .hero-title {
+            font-size: 3.2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .organizers {
+            font-size: 1.1em;
+            color: #e0e0e0;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        .organizers span {
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px auto;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.3);
+            animation: pulse 2s infinite;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .warning-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .nav-container {
+            background: white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-radius: 20px 20px 0 0;
+            margin-top: -20px;
+            position: relative;
+            z-index: 3;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            background: transparent;
+            flex-wrap: wrap;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 4px solid transparent;
+            font-weight: 600;
+            color: #2c3e50;
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .nav-tab:hover {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            transform: translateY(-2px);
+        }
+        
+        .nav-tab.active {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border-bottom-color: #f39c12;
+        }
+        
+        .main-container {
+            background: white;
+            min-height: 70vh;
+        }
+        
+        .tab-content {
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .tab-pane.active {
+            display: block;
+        }
+        
+        .intro-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .intro-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-left: 5px solid #3498db;
+            transition: all 0.3s;
+        }
+        
+        .intro-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .card-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .case-study {
+            background: #f8f9fa;
+            border-left: 5px solid #3498db;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 0 15px 15px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .case-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .data-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .data-box {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .data-box.problem {
+            border-left: 5px solid #e74c3c;
+        }
+        
+        .data-box.solution {
+            border-left: 5px solid #27ae60;
+        }
+        
+        .interactive-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .interactive-table th {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .interactive-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.3s;
+        }
+        
+        .interactive-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .interactive-table tr:hover {
+            background: #e3f2fd;
+            transform: scale(1.01);
+        }
+        
+        .score-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            min-width: 60px;
+            display: inline-block;
+        }
+        
+        .score-high { background: #27ae60; }
+        .score-medium { background: #f39c12; }
+        .score-low { background: #e74c3c; }
+        
+        .success-story {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border-left: 5px solid #27ae60;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            margin: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .simulation-box {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin: 30px 0;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(39, 174, 96, 0.3);
+        }
+        
+        .outlier-demo {
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin: 30px 0;
+            box-shadow: 0 15px 35px rgba(142, 68, 173, 0.3);
+        }
+        
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .tool-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 2px solid #e9ecef;
+            transition: all 0.3s;
+        }
+        
+        .tool-card:hover {
+            border-color: #3498db;
+            transform: translateY(-3px);
+        }
+        
+        .input-group {
+            margin: 20px 0;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+        
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .detective-quiz {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .detective-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .detective-header h3 {
+            font-size: 2em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .progress-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .progress-bar {
+            width: 300px;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            transition: width 0.5s ease;
+        }
+
+        .quiz-story {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .quiz-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .quiz-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 3px solid transparent;
+        }
+
+        .quiz-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-color: #3498db;
+        }
+
+        .quiz-card.selected {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-color: #27ae60;
+        }
+
+        .quiz-card.wrong {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border-color: #e74c3c;
+        }
+
+        .quiz-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .detective-instruction {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .clue-counter {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #3498db;
+            margin: 20px 0;
+        }
+
+        .simple-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .simple-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            height: 300px;
+            perspective: 1000px;
+        }
+
+        .simple-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        
+        .simple-card .card-front, .simple-card .card-back {
+            transform-style: preserve-3d;
+        }
+
+        .simple-card.flipped .card-front {
+            transform: rotateY(180deg);
+        }
+
+        .simple-card.flipped .card-back {
+            transform: rotateY(0deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            padding: 25px;
+            border-radius: 15px;
+            backface-visibility: hidden;
+            transition: transform 0.6s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .clue-number {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .clue-found {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .check-items {
+            margin: 15px 0;
+        }
+
+        .check-item {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 10px;
+            margin: 5px 0;
+        }
+
+        .action-result {
+            background: rgba(255,255,255,0.3);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .detective-conclusion {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin: 30px 0;
+            box-shadow: 0 15px 35px rgba(243, 156, 18, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="copyright-bar">
+        © 2025 서울미술고등학교 교사 황미란. All rights reserved.
+    </div>
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">📊 2025년 찾아가는 학교 컨설팅 </h1>
+            <p class="hero-subtitle">사전 설문 데이터 분석 가이드</p>
+            <div class="organizers">
+                <span>운영기관</span> 총신대학교 | 아코스쿨 | 에프엔제이
+            </div>
+            
+            <div class="warning-box">
+                <div class="warning-title">
+                    ⚠️ 코디네이터 필독!
+                </div>
+                <p><strong>"평균에 속지 마라! 이상치가 진짜 이야기다"</strong></p>
+                <p>48명이 4-5점을 줬는데 2명만 1점?! 평균이 높으니 괜찮은 걸까? </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-container">
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showTab('overview', this)">🎯 핵심 개념</div>
+            <div class="nav-tab" onclick="showTab('outlier-detective', this)">🔍 이상치 탐정</div>
+            <div class="nav-tab" onclick="showTab('case-studies', this)">📚 실전 사례</div>
+            <div class="nav-tab" onclick="showTab('interview-prep', this)">🤝 심층면담 준비</div>
+            <div class="nav-tab" onclick="showTab('tools', this)">🛠️ 실무 도구</div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="tab-content">
+            <div class="tab-pane active" id="overview">
+                <h2>🎯 코디네이터가 알아야 할 핵심 개념</h2>
+                <div class="intro-grid">
+                    <div class="intro-card">
+                        <div class="card-icon">📈</div>
+                        <div class="card-title">평균의 함정</div>
+                        <p>전체 평균 3.8점이 '보통'이라고? 실제로는 1점(15%)과 5점(85%)으로 양극화된 경우가 많습니다. 평균만 보면 진짜 이야기를 놓칩니다.</p>
+                    </div>
+                    <div class="intro-card">
+                        <div class="card-icon">🎯</div>
+                        <div class="card-title">이상치 = SOS 신호</div>
+                        <p>극단적 응답(1점, 5점)은 무시할 게 아니라 주목해야 할 신호입니다. 한 명의 1점이 전체 시스템 문제를 알려주는 경우가 많습니다.</p>
+                    </div>
+                    <div class="intro-card">
+                        <div class="card-icon">🔍</div>
+                        <div class="card-title">4가지 해석법</div>
+                        <p>이상치는 ①환경적 요인 ②개인적 특성 ③시스템적 문제 ④악의적 응답으로 해석 가능합니다. 각각 다른 접근이 필요합니다.</p>
+                    </div>
+                    <div class="intro-card">
+                        <div class="card-icon">💡</div>
+                        <div class="card-title">맥락적 이해</div>
+                        <p>데이터는 답을 주지 않습니다. 질문만 던질 뿐입니다. 학교의 상황과 맥락을 이해해야 올바른 해석이 가능합니다.</p>
+                    </div>
+                </div>
+                <div class="simulation-box">
+                    <h3>🎮 실전 시뮬레이션 체험하기</h3>
+                    <p>실제 자가진단 데이터로 이상치 분석을 연습해보세요!</p>
+                    <button class="btn btn-warning" onclick="showTab('outlier-detective', document.querySelectorAll('.nav-tab')[1])">시뮬레이션 시작</button>
+                </div>
+                <div class="highlight">
+                    <h3>💡 코디네이터 핵심 마인드셋</h3>
+                    <ul>
+                        <li><strong>데이터 뒤의 사람을 봐라:</strong> 숫자는 현상일 뿐, 진짜 이야기는 사람에게 있다</li>
+                        <li><strong>작은 신호를 놓치지 마라:</strong> 소수의 극단적 응답이 전체 문제를 알려준다</li>
+                        <li><strong>맥락을 읽어라:</strong> 같은 1점이라도 원인이 다르면 해결책도 달라야 한다</li>
+                        <li><strong>현장 검증이 필수다:</strong> 가설은 반드시 현장에서 확인해야 한다</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-pane" id="outlier-detective">
+                <h2>🔍 이상치 탐정 실습관</h2>
+                <div class="outlier-demo">
+                    <h3>🚨 긴급 상황: 이상치 발견!</h3>
+                    <p>다음 데이터에서 이상치를 찾고, 올바른 해석을 선택하세요.</p>
+                </div>
+                <div class="case-study">
+                    <div class="case-title">📊 시나리오 1: "기술-1: 교사용 디지털 기기 보급 수준"</div>
+                    <div class="data-comparison">
+                        <div class="data-box">
+                            <h4>📈 전체 응답 현황</h4>
+                            <table class="interactive-table">
+                                <tr><th>점수</th><th>응답자 수</th><th>비율</th></tr>
+                                <tr><td><span class="score-badge score-high">5점</span></td><td>36명</td><td>72%</td></tr>
+                                <tr><td><span class="score-badge score-high">4점</span></td><td>12명</td><td>24%</td></tr>
+                                <tr><td><span class="score-badge score-medium">3점</span></td><td>0명</td><td>0%</td></tr>
+                                <tr><td><span class="score-badge score-low">2점</span></td><td>0명</td><td>0%</td></tr>
+                                <tr style="background: #ffebee;"><td><span class="score-badge score-low">1점</span></td><td><strong>2명</strong></td><td><strong>4%</strong></td></tr>
+                            </table>
+                            <p><strong>평균: 4.7점</strong> (매우 높은 만족도)</p>
+                        </div>
+                        <div class="data-box problem">
+                            <h4>⚠️ 뭔가 이상해요!</h4>
+                            <p><strong>36명: "기기가 아주 좋아요!" (5점)</strong></p>
+                            <p><strong>12명: "기기가 좋아요!" (4점)</strong></p>
+                            <p><strong>2명: "기기가 너무 별로예요..." (1점)</strong></p><br>
+                            <p>🤔 <strong>왜 이 2명만 완전히 다를까요?</strong></p>
+                            <p>대부분이 만족하는데 2명만 극도로 불만족...</p>
+                            <p>💡 이런 <strong>'튀는' 답변</strong>이야말로 진짜 문제를 알려주는 신호등입니다!</p>
+                        </div>
+                    </div>
+                    <div class="detective-quiz">
+                        <div class="detective-header">
+                            <h3>🕵️‍♀️ 코디네이터 탐정님!</h3>
+                            <p>김선생님이 1점을 준 진짜 이유를 찾아주세요!</p>
+                            <div class="progress-indicator">
+                                <span>🔍 탐정 진행도: </span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="detective-progress" style="width: 0%"></div>
+                                </div>
+                                <span id="clues-found">발견한 단서: 0/5개</span>
+                            </div>
+                        </div>
+                        <div class="quiz-story">
+                            <p><strong>🎯 미스터리:</strong> 36명+12명이 만족하는데, 2명만 극도로 불만족... 이 신호등의 진짜 원인은?</p>
+                        </div>
+                        <div class="quiz-cards-grid">
+                            <div class="quiz-card" onclick="selectQuizAnswer(this, 'A', false)"><div class="quiz-icon">😤</div><h4>까다로운 성격</h4><p>완벽주의 성향으로 높은 기준 적용</p></div>
+                            <div class="quiz-card correct-answer" onclick="selectQuizAnswer(this, 'B', true)"><div class="quiz-icon">💻</div><h4>기기 문제</h4><p>10년된 컴퓨터나 인프라 이슈</p></div>
+                            <div class="quiz-card" onclick="selectQuizAnswer(this, 'C', false)"><div class="quiz-icon">🚫</div><h4>사업 반대</h4><p>디지털 교육에 대한 저항감</p></div>
+                            <div class="quiz-card" onclick="selectQuizAnswer(this, 'D', false)"><div class="quiz-icon">🤷</div><h4>입력 실수</h4><p>실수로 잘못 클릭했을 가능성</p></div>
+                        </div>
+                        <div id="quiz-feedback" style="display: none; margin-top: 20px;"></div>
+                    </div>
+                    <div class="detective-instruction">
+                        <h4>🎮 이제 단서 카드를 뒤집어서 자세한 내용을 확인해보세요!</h4>
+                        <p style="text-align: center; color: #666; margin-bottom: 30px;">💡 각 카드를 클릭하여 단서를 확인할 수 있습니다.</p>
+                        <div class="clue-counter"><span id="flipped-cards">뒤집은 카드: 0/4</span></div>
+                    </div>
+                    <div class="simple-cards-grid">
+                        <div class="simple-card" onclick="flipSimpleCard(this, 'environment')">
+                            <div class="card-front"><div class="clue-number">단서 #1</div><div class="card-icon">🏢</div><h3>환경적 요인</h3><p>"별관 3층, 구형 컴퓨터..."</p></div>
+                            <div class="card-back"><div class="clue-found">🔍 단서 발견!</div><h4>주요 체크 포인트</h4><div class="check-items"><div class="check-item">🖥️ 구형 컴퓨터 사용중</div><div class="check-item">📶 와이파이 신호 약함</div><div class="check-item">🔧 유지보수 어려움</div><div class="check-item">📍 행정실과 거리 멀음</div></div><div class="action-result">💡 즉시 개별 환경 점검!</div></div>
+                        </div>
+                        <div class="simple-card" onclick="flipSimpleCard(this, 'personal')">
+                            <div class="card-front"><div class="clue-number">단서 #2</div><div class="card-icon">👤</div><h3>개인적 특성</h3><p>"IT 선도학교 출신..."</p></div>
+                            <div class="card-back"><div class="clue-found">🔍 단서 발견!</div><h4>주요 체크 포인트</h4><div class="check-items"><div class="check-item">🎯 매우 높은 기준</div><div class="check-item">🏫 이전 학교가 IT 선도</div><div class="check-item">📱 개인 기기와 비교</div><div class="check-item">⭐ 완벽주의 성향</div></div><div class="action-result">💡 높은 기준 활용해 리더 역할!</div></div>
+                        </div>
+                        <div class="simple-card" onclick="flipSimpleCard(this, 'system')">
+                            <div class="card-front"><div class="clue-number">단서 #3</div><div class="card-icon">⚙️</div><h3>시스템적 문제</h3><p>"학교가 모르는 숨겨진 결함..."</p></div>
+                            <div class="card-back"><div class="clue-found">🔍 단서 발견!</div><h4>주요 체크 포인트</h4><div class="check-items"><div class="check-item">📡 특정 구역 신호 약함</div><div class="check-item">💻 특정 모델만 문제</div><div class="check-item">🏢 층별 장비 격차</div><div class="check-item">🔧 구조적 결함 존재</div></div><div class="action-result">💡 전체 시스템 점검 필요!</div></div>
+                        </div>
+                        <div class="simple-card" onclick="flipSimpleCard(this, 'malicious')">
+                            <div class="card-front"><div class="clue-number">단서 #4</div><div class="card-icon">🚫</div><h3>의도적 응답</h3><p>"사업에 대한 저항감..."</p></div>
+                            <div class="card-back"><div class="clue-found">🔍 단서 발견!</div><h4>주요 체크 포인트</h4><div class="check-items"><div class="check-item">📝 모든 항목 1점 일관성</div><div class="check-item">💬 서술형 부정적 언어</div><div class="check-item">😡 공격적 표현 사용</div><div class="check-item">❌ 사업 자체 불신</div></div><div class="action-result">💡 개별 상담으로 진실 파악!</div></div>
+                        </div>
+                    </div>
+                    <div id="detective-conclusion" style="display: none;" class="detective-conclusion">
+                        <h3>🎯 탐정 결론</h3>
+                        <div id="conclusion-content"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="case-studies">
+                <h2>📚 실전 사례 연구</h2>
+                <div class="case-study">
+                    <div class="case-title">🏫 사례 1: 우리끼리고등학교 - "도구는 알지만 교과 적용이 어려워요"</div>
+                    <div class="data-comparison">
+                        <div class="data-box"><h4>📊 겉으로 보이는 데이터</h4><ul><li><strong>기술-5 (사용해본 디지털 도구):</strong> 4.5점</li><li>패들렛, 캔바, 미리캔버스 등 수많은 도구 나열</li><li>"우리는 이미 다 알고 있어요" 자신감</li><li><em>→ "매우 성공적인 학교"로 보임</em></li></ul></div>
+                        <div class="data-box problem"><h4>🔍 숨겨진 진실</h4><ul><li><strong>교과별 전문 과정-2 (학생참여수업 설계):</strong> 1.8점</li><li>국어/영어/사회: 4-5점 vs 수학/과학: 1-2점</li><li>서술형: "수학 수업에 어떻게 적용할지 막막하다"</li><li>"공식 설명에 패들렛이 무슨 소용인가?"</li></ul></div>
+                    </div>
+                    <div class="success-story"><h4>✅ 성공적인 접근 전략</h4><p><strong>잘못된 접근:</strong> "도구 사용법 연수를 더 받으세요"</p><p><strong>올바른 접근:</strong> "선생님들이 이미 도구는 충분히 알고 계시는 것 같습니다. 이번에는 수학, 과학 수업에 바로 적용 가능한 플립러닝이나 프로젝트 수업 설계 전문가를 모셔서 함께 수업 모델을 만들어보는 건 어떨까요?"</p><p><strong>결과:</strong> 수학/과학 교과 특화 연수로 방향 전환 → 높은 만족도 달성</p></div>
+                </div>
+                <div class="case-study">
+                    <div class="case-title">🏫 사례 2: 회신없고등학교 - "데이터 활용은 업무 부담일 뿐"</div>
+                    <div class="data-comparison">
+                        <div class="data-box"><h4>📊 문제가 된 항목</h4><ul><li><strong>데이터 기반 현장 연구 지원-3:</strong> 1.2점 (매우 낮음)</li><li>"학습데이터를 효과적으로 수집·분석하여 수업 개선에 활용할 수 있는가?"</li><li>전체 교사가 일관되게 낮은 점수</li></ul></div>
+                        <div class="data-box problem"><h4>💬 서술형 응답의 진짜 목소리</h4><ul><li>"안 그래도 바쁜데 또 다른 업무가 늘어나는 것 같다"</li><li>"이런다고 학생부 기록에 뭐가 달라지나?"</li><li>"데이터 분석할 시간에 수업 준비를 하겠다"</li><li><em>→ 데이터 활용을 '업무 부담'으로 인식</em></li></ul></div>
+                    </div>
+                    <div class="success-story"><h4>💡 패러다임 전환 전략</h4><p><strong>잘못된 접근:</strong> "데이터 분석 도구 사용법을 가르쳐드릴게요"</p><p><strong>올바른 접근:</strong> "선생님, 이 연수는 일을 더 만드는 게 아니라 일을 덜어주는 과정입니다. 구글 설문지 하나로 학생들의 오답 유형을 1분 만에 분석해서, 가장 필요한 학생에게 가장 정확한 피드백을 줄 수 있어요. 이것이 바로 학생부에 쓸 '개별화된 성장 기록'의 근거가 됩니다."</p><p><strong>핵심 메시지:</strong> 업무 증가 ❌ → 업무 효율화 ✅</p></div>
+                </div>
+                <div class="case-study">
+                    <div class="case-title">📊 사례 3: 실제 이상치 분석 성공 사례 - "김선생님의 1점이 학교를 바꾸다"</div>
+                    <div class="data-comparison">
+                        <div class="data-box"><h4>🔍 이상치 발견</h4><ul><li>기술-1 (디지털기기 보급): 김선생님만 <strong>1점</strong></li><li>나머지 모든 항목: <strong>4.2점</strong> (평균 이상)</li><li>교실혁명 의지: <strong>4.8점</strong> (매우 높음)</li><li>서술형: "의욕은 있지만 컴퓨터가 너무 느려요"</li></ul></div>
+                        <div class="data-box solution"><h4>🕵️ 추가 조사 결과</h4><ul><li>담임학급: 3학년 2반 (별관 3층)</li><li>사용 기기: 2014년 구입 데스크톱</li><li>인터넷 속도: 다른 교실 대비 50% 수준</li><li>교사 경력: 3년차 (높은 의욕과 역량)</li></ul></div>
+                    </div>
+                    <div class="success-story"><h4>🎯 해결 과정 및 결과</h4><p><strong>즉시 조치:</strong> 개별 노트북 지급 + 무선 증폭기 설치</p><p><strong>3개월 후 재조사:</strong> 기술-1 항목 1점 → 5점으로 개선</p><p><strong>파급효과:</strong> 같은 별관 교사 3명 추가 지원 요청 → 일괄 개선</p><p><strong>교훈:</strong> 이상치 한 개가 전체 시스템 문제를 알려주는 신호등 역할을 했음</p></div>
+                </div>
+                <div class="highlight">
+                    <h3>📝 사례 분석에서 배운 핵심 교훈</h3>
+                    <ul>
+                        <li><strong>평균의 함정을 피하라:</strong> 전체 평균 3.8점이지만, 실제로는 5점(85%)과 1점(15%)으로 양극화</li>
+                        <li><strong>맥락을 읽어라:</strong> 같은 1점이라도 원인이 다르면 해결책도 달라야 함</li>
+                        <li><strong>신호를 놓치지 마라:</strong> 소수의 극단적 응답이 전체 시스템 문제를 알려주는 경우가 많음</li>
+                        <li><strong>사람을 보라:</strong> 데이터 뒤에 있는 실제 교사의 상황과 감정을 이해해야 함</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-pane" id="interview-prep">
+                <h2>🤝 심층면담 준비 도구</h2>
+                <div class="tool-grid">
+                    <div class="tool-card">
+                        <h3>📋 자가진단 → 면담 질문 생성기</h3>
+                        <p>이상치 패턴을 기반으로 심층면담 질문을 자동 생성합니다.</p>
+                        <div class="input-group"><label>이상치가 발견된 문항을 선택하세요:</label><select id="outlier-question"><option value="">문항을 선택하세요</option><option value="tech-1">기술-1: 교사용 디지털 기기 보급 수준</option><option value="tech-2">기술-2: 디지털 기기 성능</option><option value="understand-3">우리학교 알아보기-3: 학습자 진단 기능 이해</option><option value="data-3">데이터 기반 현장 연구-3: 학습데이터 활용</option></select></div>
+                        <div class="input-group"><label>이상치 유형:</label><select id="outlier-type"><option value="">유형을 선택하세요</option><option value="environment">환경적 요인</option><option value="personal">개인적 특성</option><option value="system">시스템적 문제</option><option value="malicious">악의적 응답</option></select></div>
+                        <button class="btn" onclick="generateQuestions()">면담 질문 생성</button>
+                        <div id="generated-questions" style="display: none; margin-top: 20px;"></div>
+                    </div>
+                    <div class="tool-card">
+                        <h3>🎯 학교별 맞춤 분석 리포트</h3>
+                        <p>자가진단 결과를 입력하면 맞춤형 분석 리포트를 생성합니다.</p>
+                        <div class="input-group"><label>학교명:</label><input type="text" id="school-name" placeholder="예: 희망고등학교"></div>
+                        <div class="input-group"><label>주요 이상치 패턴:</label><textarea id="outlier-pattern" rows="3" placeholder="예: 기술 인프라는 높은데(4.2점) 교과 적용은 낮음(1.8점), 특히 수학/과학 교사"></textarea></div>
+                        <div class="input-group"><label>서술형 응답 키워드:</label><input type="text" id="keyword" placeholder="예: 시간부족, 어려움, 막막함"></div>
+                        <button class="btn" onclick="generateReport()">분석 리포트 생성</button>
+                        <div id="analysis-report" style="display: none; margin-top: 20px;"></div>
+                    </div>
+                </div>
+                <div class="case-study">
+                    <div class="case-title">✅ 심층면담 체크리스트</div>
+                    <div class="data-comparison">
+                        <div class="data-box"><h4>📋 면담 전 준비사항</h4><ul><li>□ 자가진단 이상치 분석 완료</li><li>□ 학교 기본 정보 조사 (선도학교 여부, 지역 특성)</li><li>□ 기존 디지털 연수 목록 확인</li><li>□ 코디팀 3명 가능 시간대 조율</li><li>□ 여러 시나리오 연수 일정표 준비</li></ul></div>
+                        <div class="data-box solution"><h4>🎯 면담 시 핵심 확인사항</h4><ul><li>□ 이상치 응답자 개별 상황 파악</li><li>□ 기기 및 프로그램 실제 사용 현황</li><li>□ 교사 간 역량 격차 정도</li><li>□ 학사일정 기반 연수 일정 조율</li><li>□ 관리자 의지 및 지원 정도</li></ul></div>
+                    </div>
+                </div>
+                <div class="highlight">
+                    <h3>💡 면담 성공을 위한 핵심 팁</h3>
+                    <ul>
+                        <li><strong>관리자를 반드시 만나라:</strong> 담당 교사와의 대화만으로는 한계가 있음</li>
+                        <li><strong>'제로 부담'은 거짓말:</strong> 현실을 인정하고 부담 최소화에 집중</li>
+                        <li><strong>확정적으로 말하지 마라:</strong> "이렇게 하세요" ❌ → "이런 방법은 어떨까요?" ✅</li>
+                        <li><strong>성공 사례를 준비하라:</strong> 특히 2차년도 학교에는 동기부여가 중요</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-pane" id="tools">
+                <h2>🛠️ 코디네이터 실무 도구함</h2>
+                <div class="tool-grid">
+                    <div class="tool-card">
+                        <h3>🎯 연수 과정 추천 시스템</h3>
+                        <p>자가진단 결과를 바탕으로 최적의 연수 과정을 추천합니다.</p>
+                        <div class="input-group"><label>학교 특성:</label><select id="school-type"><option value="">선택하세요</option><option value="advanced">선도학교 (기술 보유, 체계 부족)</option><option value="basic">일반학교 (기초부터 필요)</option><option value="mixed">혼재형 (교사 간 편차 큼)</option></select></div>
+                        <div class="input-group"><label>주요 니즈:</label><select id="main-need"><option value="">선택하세요</option><option value="tools">도구 사용법</option><option value="pedagogy">교수학습 방법론</option><option value="assessment">평가 및 데이터 활용</option><option value="subject">교과별 특화</option></select></div>
+                        <button class="btn" onclick="recommendCourses()">과정 추천 받기</button>
+                        <div id="course-recommendations" style="display: none; margin-top: 20px;"></div>
+                    </div>
+                    <div class="tool-card">
+                        <h3>🤖 AI 분석 도구 가이드</h3>
+                        <p>genspark.ai 등 AI 도구로 효율적인 분석하는 법을 알려드립니다.</p>
+                        <div class="data-comparison">
+                            <div class="data-box"><h4>❌ 나쁜 프롬프트 예시</h4><p>"자가진단 결과 분석해줘"</p><p><em>→ 너무 모호함, 맥락 없음</em></p></div>
+                            <div class="data-box solution"><h4>✅ 좋은 프롬프트 예시</h4><p>"우리끼리고등학교 자가진단 결과: 기술활용도 높음(4.5점), 교과적용도 낮음(1.8점), 수학과학 교사 특별 지원 필요, 도구 중심이 아닌 수업 모델 중심 연수 설계 필요. 이를 바탕으로 심층면담 질문과 연수 계획을 제시해줘."</p><p><em>→ 구체적, 맥락적, 목표 명확</em></p></div>
+                        </div>
+                        <button class="btn" onclick="showAITips()">AI 활용 꿀팁 보기</button>
+                        <div id="ai-tips" style="display: none; margin-top: 20px;"></div>
+                    </div>
+                </div>
+                <div class="case-study">
+                    <div class="case-title">📊 연수 설계 플로우차트</div>
+                    <div style="background: white; padding: 30px; border-radius: 15px; text-align: center;">
+                        <h4>자가진단 → 심층면담 → 연수설계 → 실행 → 평가</h4>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 30px 0; flex-wrap: wrap; gap:10px;">
+                            <div style="background: #3498db; color: white; padding: 15px; border-radius: 10px; margin: 5px; flex: 1; min-width: 120px;"><strong>이상치 분석</strong><br><small>4가지 해석법 적용</small></div>
+                            <div style="font-size: 2em; color: #3498db;">→</div>
+                            <div style="background: #e74c3c; color: white; padding: 15px; border-radius: 10px; margin: 5px; flex: 1; min-width: 120px;"><strong>가설 수립</strong><br><small>현장 검증 계획</small></div>
+                            <div style="font-size: 2em; color: #e74c3c;">→</div>
+                            <div style="background: #27ae60; color: white; padding: 15px; border-radius: 10px; margin: 5px; flex: 1; min-width: 120px;"><strong>맞춤 연수</strong><br><small>6과정 15차시 설계</small></div>
+                            <div style="font-size: 2em; color: #27ae60;">→</div>
+                            <div style="background: #f39c12; color: white; padding: 15px; border-radius: 10px; margin: 5px; flex: 1; min-width: 120px;"><strong>성과 측정</strong><br><small>사후 진단 분석</small></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="highlight">
+                    <h3>📚 추천 리소스 & 도구</h3>
+                    <ul>
+                        <li><strong>한국과학창의재단 자료실:</strong> 최신 에듀테크 트렌드 및 정책 방향</li>
+                        <li><strong>genspark.ai:</strong> 자가진단 데이터 → PPT 자동 생성</li>
+                        <li><strong>ChatGPT/Claude:</strong> 심층면담 질문 생성 및 연수 설계</li>
+                        <li><strong>구글 스프레드시트:</strong> 학교별 데이터 관리 및 추적</li>
+                        <li><strong>교사 학습공동체:</strong> 현장 경험 공유 및 베스트 프랙티스</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 탭 전환 기능
+        function showTab(tabName, tabElement) {
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+            if (tabElement) {
+                tabElement.classList.add('active');
+            }
+        }
+
+        let flippedCardsCount = 0;
+        let quizCompleted = false;
+
+        // 퀴즈 답안 선택 기능
+        function selectQuizAnswer(cardElement, answer, isCorrect) {
+            if (quizCompleted) return;
+
+            const allQuizCards = document.querySelectorAll('.quiz-card');
+            allQuizCards.forEach(card => card.style.pointerEvents = 'none');
+
+            const feedbackDiv = document.getElementById('quiz-feedback');
+            
+            if (isCorrect) {
+                cardElement.classList.add('selected');
+                feedbackDiv.innerHTML = `<div class="success-story"><h4>🎉 정답입니다! 훌륭한 탐정 감각이에요!</h4><p><strong>환경적 요인을 먼저 의심하는 것이 올바른 접근입니다!</strong></p><p>데이터 분석에서는 사람을 탓하기 전에 상황과 환경을 먼저 점검해야 합니다.</p><p>🔍 이제 아래 단서 카드들을 뒤집어서 더 자세히 조사해보세요!</p></div>`;
+                quizCompleted = true;
+                updateProgress();
+            } else {
+                cardElement.classList.add('wrong');
+                document.querySelector('.quiz-card.correct-answer').classList.add('selected');
+                feedbackDiv.innerHTML = `<div class="case-study" style="border-color: #e74c3c;"><h4>🤔 아쉽네요! 다시 생각해보세요.</h4><p><strong>데이터 뒤의 사람과 상황을 먼저 고려해야 합니다.</strong></p><p>성격이나 의도보다는 구체적인 환경적 요인을 먼저 확인하는 것이 현명한 접근입니다.</p></div>`;
+                setTimeout(() => {
+                    allQuizCards.forEach(card => {
+                        card.style.pointerEvents = 'auto';
+                        card.classList.remove('wrong', 'selected');
+                    });
+                    feedbackDiv.style.display = 'none';
+                }, 4000);
+            }
+            feedbackDiv.style.display = 'block';
+        }
+        
+        // 간단한 카드 뒤집기 기능
+        function flipSimpleCard(cardElement, type) {
+            const isFlipped = cardElement.classList.toggle('flipped');
+            if (isFlipped) {
+                flippedCardsCount++;
+            } else {
+                flippedCardsCount--;
+            }
+            updateProgress();
+        }
+
+        // 진행도 업데이트 통합 함수
+        function updateProgress() {
+            const baseProgress = quizCompleted ? 20 : 0;
+            const cardProgress = (flippedCardsCount / 4) * (100 - baseProgress);
+            const totalProgress = baseProgress + cardProgress;
+            
+            document.getElementById('detective-progress').style.width = Math.min(totalProgress, 100) + '%';
+            
+            document.getElementById('flipped-cards').textContent = `뒤집은 카드: ${flippedCardsCount}/4`;
+            
+            const cluesFound = flippedCardsCount + (quizCompleted ? 1 : 0);
+            document.getElementById('clues-found').textContent = `발견한 단서: ${cluesFound}/5개`;
+
+            if (flippedCardsCount === 4 && quizCompleted) {
+                setTimeout(showDetectiveConclusion, 1000);
+            } else {
+                 document.getElementById('detective-conclusion').style.display = 'none';
+            }
+        }
+
+        // 탐정 결론 표시
+        function showDetectiveConclusion() {
+            const conclusionDiv = document.getElementById('detective-conclusion');
+            const contentDiv = document.getElementById('conclusion-content');
+            contentDiv.innerHTML = `<div style="text-align: center;"><h4>🕵️‍♀️ 탐정 수사 완료!</h4><p style="font-size: 1.2em; margin: 20px 0;">모든 단서를 종합한 결과, <strong>"2명의 1점 응답"</strong>은<br><span style="background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-weight: bold;">🏢 환경적 요인</span>이 가장 유력합니다!</p><div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; margin: 20px 0;"><h5>💡 추천 액션 플랜</h5><ul style="text-align: left; max-width: 400px; margin: 0 auto; list-style-position: inside;"><li>✅ 2명 교사 개별 환경 점검</li><li>✅ 구형 기기 교체 우선순위 선정</li><li>✅ 네트워크 취약 구역 개선</li><li>✅ 유지보수 시스템 강화</li></ul></div><div style="margin-top: 25px;"><span style="background: #f39c12; padding: 8px 20px; border-radius: 20px; font-weight: bold;">🏆 탐정 레벨: 전문 코디네이터 달성!</span></div></div>`;
+            conclusionDiv.style.display = 'block';
+            conclusionDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 심층면담 질문 생성 기능
+        function generateQuestions() {
+            const question = document.getElementById('outlier-question').value;
+            const type = document.getElementById('outlier-type').value;
+            if (!question || !type) {
+                alert('문항과 유형을 모두 선택해주세요.');
+                return;
+            }
+            const questions = {
+                'tech-1': {'environment': ["선생님께서 현재 사용하고 계신 컴퓨터는 언제 구입하신 건가요?", "교실의 와이파이 연결 상태는 어떠신가요?", "다른 선생님들과 비교해서 기기 사용에 차이가 있나요?", "혹시 특별한 환경적 제약이 있으신가요?"], 'personal': ["선생님께서 기대하시는 디지털 기기 수준은 어느 정도인가요?", "이전 학교와 비교해서 어떤 차이를 느끼시나요?", "개인적으로 사용하시는 기기와 비교하면 어떠신가요?", "어떤 부분이 가장 아쉬우신가요?"], 'system': ["교실 위치나 층별로 기기 성능 차이가 있나요?", "특정 프로그램 사용 시 문제가 발생하나요?", "네트워크 연결이 불안정한 구역이 있나요?", "다른 선생님들도 비슷한 문제를 겪고 계신가요?"], 'malicious': ["이 사업에 대해 어떻게 생각하시나요?", "디지털 교육에 대한 개인적인 의견은 어떠신가요?", "혹시 연수 참여에 부담을 느끼시나요?", "더 솔직한 의견을 듣고 싶습니다."]},
+                'tech-2': {'environment': ["기기 성능 저하의 주된 원인이 무엇이라고 생각하시나요? (e.g. 부팅 속도, 프로그램 실행 속도)", "기기 문제가 특정 시간대나 특정 작업 시에만 발생하나요?", "유지보수나 기술 지원을 요청했을 때, 신속하게 해결되었나요?"], 'personal': ["선생님께서 주로 사용하시는 프로그램 대비 현재 기기 사양이 부족하다고 느끼시나요?", "원활한 수업을 위해 어느 정도의 성능 개선이 필요하다고 보시나요?", "느린 성능 때문에 수업 계획을 변경하신 경험이 있으신가요?"], 'system': ["학교에 노후화된 기기가 특정 연도에 집중적으로 보급되었나요?", "기기 성능 개선을 위한 학교 차원의 계획이 있는지 궁금합니다.", "전체적인 기기 성능 표준화에 대한 필요성을 느끼시나요?"], 'malicious': ["기기 성능 문제를 의도적으로 부각하여 사업에 대한 불만을 표현하신 것은 아닌지 여쭤봐도 될까요?", "혹시 기기 성능 외에 다른 어려움이 있으신지 말씀해주실 수 있나요?", "컨설팅을 통해 어떤 부분이 가장 개선되기를 바라시나요?"]},
+                'data-3': {'environment': ["현재 데이터 수집을 위한 도구나 시스템이 있나요?", "학습 데이터 관리를 위한 시간이 충분한가요?", "데이터 분석을 위한 기술적 지원이 필요하신가요?"], 'personal': ["데이터 활용에 대한 경험이 어느 정도 되시나요?", "데이터 분석이 수업에 어떤 도움이 될 것 같으신가요?", "가장 어려워하시는 부분은 무엇인가요?"], 'system': ["데이터 수집 및 분석에 대한 학교 차원의 시스템이 있나요?", "데이터 활용 우수 사례를 공유하는 문화가 있나요?", "데이터 관련 업무 부담을 줄여줄 지원책이 필요할까요?"], 'malicious': ["데이터 기반 교육이 오히려 업무를 가중시킨다고 느끼시나요?", "이러한 데이터 수집/분석이 실질적인 교육 개선으로 이어진다고 보시나요?", "솔직하게, 데이터 활용에 대한 가장 큰 우려는 무엇인가요?"]}
+            };
+            const resultDiv = document.getElementById('generated-questions');
+            const questionList = questions[question]?.[type] || ['맞춤형 질문을 준비 중입니다.'];
+            resultDiv.innerHTML = `<div class="success-story"><h4>📋 생성된 심층면담 질문</h4><ol style="list-style-position: inside; padding-left: 10px;">${questionList.map(q => `<li>${q}</li>`).join('')}</ol><p><strong>💡 추가 팁:</strong> 질문할 때는 비판적이지 않고 이해하려는 자세로 접근하세요.</p></div>`;
+            resultDiv.style.display = 'block';
+        }
+
+        // 분석 리포트 생성 기능
+        function generateReport() {
+            const schoolName = document.getElementById('school-name').value;
+            const pattern = document.getElementById('outlier-pattern').value;
+            const keywords = document.getElementById('keyword').value;
+            if (!schoolName || !pattern) {
+                alert('학교명과 이상치 패턴을 입력해주세요.');
+                return;
+            }
+            const reportDiv = document.getElementById('analysis-report');
+            reportDiv.innerHTML = `<div class="case-study"><h3>📊 ${schoolName} 맞춤 분석 리포트</h3><div class="data-comparison"><div class="data-box problem"><h4>🔍 발견된 패턴</h4><p>${pattern}</p><p><strong>키워드:</strong> ${keywords || '입력 없음'}</p></div><div class="data-box solution"><h4>💡 추천 접근법</h4><ul style="list-style-position: inside;"><li>도구 중심 ❌ → 교육철학 중심 ✅</li><li>일반적 연수 ❌ → 교과별 특화 ✅</li><li>기술 교육 ❌ → 수업 모델 교육 ✅</li></ul></div></div><div class="success-story"><h4>🎯 추천 연수 과정</h4><ol style="list-style-position: inside; padding-left: 10px;"><li><strong>0. 우리 학교 알아보기</strong> (1차시) - 필수</li><li><strong>교과별 전문 과정</strong> (3차시) - 수학/과학 특화</li><li><strong>학생참여수업 설계</strong> (3차시) - 실습 중심</li><li><strong>데이터 기반 평가</strong> (2차시) - 업무 효율화 관점</li><li><strong>교사 학습공동체</strong> (2차시) - 지속가능성</li></ol></div></div>`;
+            reportDiv.style.display = 'block';
+        }
+
+        // 연수 과정 추천 기능
+        function recommendCourses() {
+            const schoolType = document.getElementById('school-type').value;
+            const mainNeed = document.getElementById('main-need').value;
+            if (!schoolType || !mainNeed) {
+                alert('학교 특성과 주요 니즈를 모두 선택해주세요.');
+                return;
+            }
+            const recommendations = {
+                'advanced-pedagogy': {title: '선도학교 × 교수학습 방법론', courses: ['0. 우리 학교 알아보기 (1차시)','2. 학생참여수업(개별/협력) 설계 (4차시)','4. 학생참여수업 실행 및 과정중심평가 (4차시)','6. 수업 성찰 및 개선 (3차시)','8. 교사 학습공동체 운영 (3차시)'], description: '기술은 이미 충분하므로 교육철학과 수업 방법론에 집중'},
+                'basic-tools': {title: '일반학교 × 도구 사용법', courses: ['0. 우리 학교 알아보기 (1차시)','1. 수업 내용 구성 및 학생 특성 분석 (3차시)','3. 교육자료 구성 및 디지털 도구 활용 (4차시)','5. 디지털 교육 도구 활용 심화 (4차시)','7. 개별 특성 분석 및 지원 방안 (3차시)'], description: '기초부터 차근차근, 실습 중심으로 진행'},
+                'mixed-assessment': {title: '혼재형 × 평가 및 데이터 활용', courses: ['0. 우리 학교 알아보기 (1차시)','4. 학생참여수업 실행 및 과정중심평가 (4차시)','7. 개별 특성 분석 및 지원 방안 (3차시)','9. 수업설계 효과성 분석 (4차시)','10. 핵심역량 함양 성찰 (3차시)'], description: '교사 간 편차를 줄이고 체계적인 평가 시스템 구축'}
+            };
+            const key = `${schoolType}-${mainNeed}`;
+            const recommendation = recommendations[key] || {title: '맞춤형 과정 조합', courses: ['0. 우리 학교 알아보기 (1차시)','상황에 맞는 5개 과정을 심층면담에서 결정','총 15차시 이상으로 구성'], description: '구체적인 니즈 파악 후 맞춤 설계 필요'};
+            const resultDiv = document.getElementById('course-recommendations');
+            resultDiv.innerHTML = `<div class="success-story"><h3>🎯 ${recommendation.title}</h3><p><strong>추천 이유:</strong> ${recommendation.description}</p><h4>📋 추천 과정 구성</h4><ol style="list-style-position: inside; padding-left: 10px;">${recommendation.courses.map(course => `<li>${course}</li>`).join('')}</ol><div class="highlight"><p><strong>💡 참고사항:</strong></p><ul style="list-style-position: inside;"><li>전체 연수에서 분반은 최대 1회(2개 반)까지 가능</li><li>온라인 연수는 전체의 30% 이내에서만 가능</li><li>학생/학부모 대상 과정은 합쳐서 5차시 이내</li></ul></div></div>`;
+            resultDiv.style.display = 'block';
+        }
+
+        // AI 활용 팁 보기
+        function showAITips() {
+            const tipsDiv = document.getElementById('ai-tips');
+            tipsDiv.innerHTML = `<div class="case-study"><h3>🤖 AI 도구 활용 꿀팁</h3><div class="data-comparison"><div class="data-box"><h4>⚡ 시간 단축 전략</h4><ul><li><strong>genspark.ai:</strong> 자가진단 데이터 → PPT 자동 생성 (3분)</li><li><strong>ChatGPT:</strong> 심층면담 질문 템플릿 생성 (1분)</li><li><strong>Claude:</strong> 연수 계획서 초안 작성 (5분)</li><li><strong>반복 작업:</strong> 템플릿 저장해서 재활용</li></ul></div><div class="data-box solution"><h4>🎯 효과적인 프롬프트 구조</h4><ol style="list-style-position: inside;"><li><strong>상황 설명:</strong> "우리끼리고등학교, 선도학교"</li><li><strong>데이터 요약:</strong> "기술 4.5점, 교과적용 1.8점"</li><li><strong>특이사항:</strong> "수학/과학 교사 특별 지원 필요"</li><li><strong>요청사항:</strong> "심층면담 질문 5개 생성"</li><li><strong>형식 지정:</strong> "표 형태로 정리"</li></ol></div></div><div class="highlight"><h4>🚀 실전 활용 시나리오</h4><p><strong>1단계:</strong> 자가진단 로우데이터 → genspark.ai → 분석 PPT 생성</p><p><strong>2단계:</strong> 이상치 패턴 → ChatGPT → 면담 질문 리스트</p><p><strong>3단계:</strong> 학교 특성 + 니즈 → Claude → 연수 계획 초안</p><p><strong>4단계:</strong> 결과물 검토 → 수정 → 최종 완성</p></div></div>`;
+            tipsDiv.style.display = 'block';
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            showTab('overview', document.querySelector('.nav-tab.active'));
+        });
+    </script>
+</body>
+</html>
