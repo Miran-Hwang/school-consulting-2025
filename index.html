@@ -2,7 +2,7 @@
 <html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2025년 찾아가는 학교 컨설팅 데이터 분석 실무가이드 (개선버전)</title>
+    <title>2025년 찾아가는 학교 컨설팅 데이터 분석 실무가이드</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
     <!-- 아이콘 깨짐 방지를 위해 CDN 링크로 교체 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -19,7 +19,6 @@
             min-height: 100vh;
             line-height: 1.6;
             font-size: 14px;
-            /* 하단 고정 copyright-bar 공간 확보 */
         }
 
         .copyright-bar {
@@ -29,11 +28,6 @@
             padding: 8px;
             font-size: 0.8em;
             width: 100%;
-            /* 하단 고정 스타일 */
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
         }
         
         .hero-section {
@@ -43,7 +37,6 @@
             text-align: center;
             position: relative;
             overflow: hidden;
-            margin-top: 35px; /* 이 줄을 추가 */
         }
         
         .hero-content {
@@ -749,7 +742,6 @@
     </style>
 </head>
 <body>
-    <!-- 저작권 바는 스크롤과 무관하게 항상 하단에 고정됨 -->
     <div class="copyright-bar">
         © 2025 서울미술고등학교 교사 황미란. All rights reserved.
     </div>
@@ -1292,21 +1284,21 @@
         let flippedCardsCount = 0;
         let quizCompleted = false;
 
-        // 퀴즈 답안 선택 기능 (개선: 여러 카드 선택 가능하도록 수정)
+        // 퀴즈 답안 선택 기능 (수정: 여러 카드 자유롭게 클릭 가능)
         function selectQuizAnswer(cardElement, answer, isCorrect) {
-            // 처음 카드를 클릭했을 때만 '퀴즈 완료' 상태로 변경하고 진행도를 업데이트합니다.
+            // 처음 카드를 클릭했을 때만 '퀴즈 완료' 상태로 변경하고 진행도를 업데이트
             if (!quizCompleted) {
                 quizCompleted = true;
                 updateProgress();
             }
 
-            // 모든 퀴즈 카드에서 'selected' 클래스를 제거합니다.
+            // 모든 퀴즈 카드에서 'selected' 클래스를 먼저 제거
             const allQuizCards = document.querySelectorAll('.quiz-card');
             allQuizCards.forEach(card => {
                 card.classList.remove('selected');
             });
 
-            // 현재 클릭한 카드에만 'selected' 클래스를 추가합니다.
+            // 현재 클릭한 카드에만 'selected' 클래스를 추가
             cardElement.classList.add('selected');
 
             // 피드백 표시 로직
